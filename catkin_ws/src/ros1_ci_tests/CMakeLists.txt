@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(ros1_ci_tests)
+find_package(catkin REQUIRED)
+catkin_package()
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest(tests/sim_sanity.test)
+endif()
