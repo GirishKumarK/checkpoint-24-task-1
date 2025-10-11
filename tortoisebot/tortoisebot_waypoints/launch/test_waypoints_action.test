@@ -1,0 +1,10 @@
+<launch>
+  <!-- Headless Gazebo world + spawn the robot you use -->
+  <include file="$(find tortoisebot_gazebo)/launch/tortoisebot_playground.launch" />
+
+  <!-- Start your Waypoints Action Server (adjust pkg/type as needed) -->
+  <node pkg="tortoisebot_waypoints" type="tortoisebot_action_server.py" name="waypoints_server" output="screen" launch-prefix="$(find tortoisebot_waypoints)/scripts/delay.sh 5" />
+
+  <!-- Start your tests (gtests/pytest/rostest-compatible) -->
+  <test test-name="test_waypoints_action_test" pkg="tortoisebot_waypoints" type="test_waypoints_position_yaw_test.py" launch-prefix="$(find tortoisebot_waypoints)/scripts/delay.sh 5" />
+</launch>
