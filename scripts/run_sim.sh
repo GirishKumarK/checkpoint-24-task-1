@@ -1,21 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Start roscore
-roscore >/tmp/roscore.log 2>&1 &
-ROSCORE_PID=$!
-sleep 3
+# Source ROS + workspace
+source /opt/ros/noetic/setup.bash
+[ -f /root/simulation_ws/install/setup.bash ] && source /root/simulation_ws/install/setup.bash || true
+[ -f /root/simulation_ws/devel/setup.bash ]   && source /root/simulation_ws/devel/setup.bash   || true
 
-# Launch Gazebo + TortoiseBot world without GUI (adjust package/launch!)
-# Common names are like: tortoisebot_gazebo/launch/tortoisebot_world.launch
-# Or: tortoisebot_gazebo main.launch use_gui:=false
-roslaunch tortoisebot_gazebo main.launch use_gui:=false >/tmp/gazebo.log 2>&1 &
-GAZEBO_PID=$!
+# If no DISPLAY, start a virtual X (lets this work headless too)
+if [[ -z "${DISPLAY:-}" ]]; then
+  export DISPLAY=:99
+  Xvfb :99 -screen 0 1280x800x24 &
+  sleep 1
+fi
 
-echo "Sim PIDs: roscore=$ROSCORE_PID gazebo=$GAZEBO_PID"
-echo "Waiting for /gazebo node..."
-timeout 60 bash -c 'until rosnode list | grep -q "/gazebo"; do sleep 1; done'
-echo "Gazebo is up."
-
-# Keep foreground if you want to observe; otherwise exit and let Jenkins tests run separately
-wait
+# Launch the sim (GUI if DISPLAY is real; headless if Xvfb)
+exec roslaunch tortoisebot_gazebo tortoisebot_playground.launch

@@ -1,3 +1,0 @@
-<launch>
-  <test test-name="topics_exist" pkg="ros1_ci_tests" type="topics_exist.py" time-limit="120"/>
-</launch>

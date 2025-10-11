@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  sim:
+    image: tortoisebot-sim:noetic
+    shm_size: "2g"
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_MASTER_URI=http://sim:11311
+      - ROS_HOSTNAME=sim
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./scripts/run_sim.sh:/run_sim.sh:ro
+      - ./scripts/test_waypoints.sh:/test_waypoints.sh:ro
+    command: ["/test_waypoints.sh"]
+
